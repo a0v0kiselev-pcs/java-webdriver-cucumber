@@ -225,4 +225,51 @@ public class PredefinedStepDefs {
     public void iMouseOverElementWithXpath(String xpath) {
         new Actions(getDriver()).moveToElement(getDriver().findElement(By.xpath(xpath))).perform();
     }
+
+    /**
+     * Checks is an element is in the client viewport
+     * Note: no-quirks mode is implied
+     * See:
+     * <a href="https://developer.mozilla.org/en-US/docs/Web/API/Element/clientWidth">https://developer.mozilla.org/en-US/docs/Web/API/Element/clientWidth</>
+     * and
+     * <a href="https://developer.mozilla.org/en-US/docs/Web/API/Element/clientHeight">https://developer.mozilla.org/en-US/docs/Web/API/Element/clientHeight</a>
+     *
+     * @param xpath to an element
+     */
+    @Then("element with xpath {string} should be in viewport")
+    public void elementWithXpathShouldBeInViewport(final String xpath) {
+        final WebElement element;
+        try {
+            element = getDriver().findElement(By.xpath(xpath));
+        } catch (final NoSuchElementException e) {
+            throw new AssertionError("The element is not found");
+        }
+        JavascriptExecutor executor = (JavascriptExecutor) getDriver();
+        final Object r = executor.executeScript("var r = arguments[0].getBoundingClientRect();" +
+                "return " +
+                "r.top >= 0 &&" +
+                "r.left >= 0 &&" +
+                "r.bottom <= document.documentElement.clientHeight &&" +
+                "r.right <= document.documentElement.clientWidth;", element);
+        if (r instanceof Boolean && (Boolean) r)
+            return;
+        throw new AssertionError("The element is not in the client viewport");
+    }
+
+    @Then("element with xpath {string} should be visible")
+    public void elementWithXpathShouldBeVisible(final String xpath) {
+        try {
+            assertThat(getDriver().findElement(By.xpath(xpath)).isDisplayed()).isTrue();
+        } catch (final NoSuchElementException e) {
+            throw new AssertionError("The element is not found");
+        }
+    }
+
+    @Then("element with xpath {string} should not be visible")
+    public void elementWithXpathShouldNotBeVisible(final String xpath) {
+        try {
+            assertThat(getDriver().findElement(By.xpath(xpath)).isDisplayed()).isFalse();
+        } catch (final NoSuchElementException ignored) {
+        }
+    }
 }
