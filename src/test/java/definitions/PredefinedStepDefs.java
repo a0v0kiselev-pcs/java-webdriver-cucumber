@@ -9,10 +9,12 @@ import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+
 import java.io.File;
 import java.util.Date;
 import java.util.Iterator;
-import static org.assertj.core.api.Assertions.*;
+
+import static org.assertj.core.api.Assertions.assertThat;
 import static support.TestContext.getDriver;
 
 public class PredefinedStepDefs {
@@ -27,16 +29,16 @@ public class PredefinedStepDefs {
         getDriver().manage().window().setSize(dimension);
     }
 
-    @Then("I wait for {int} sec")
-    public void iWaitForSec(int sec) throws Exception {
-        Thread.sleep(sec * 1000);
+    @Then("I wait for {float} sec")
+    public void iWaitForSec(final float sec) throws Exception {
+        Thread.sleep((long) (sec * 1000));
     }
 
     @When("I maximize window")
     public void iMaximizeWindow() {
         java.awt.Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
         Dimension maxWindowSize = new Dimension((int) screenSize.getWidth(), (int) screenSize.getHeight());
-        getDriver().manage().window().setPosition(new Point(0,0));
+        getDriver().manage().window().setPosition(new Point(0, 0));
         getDriver().manage().window().setSize(maxWindowSize);
     }
 
@@ -52,12 +54,14 @@ public class PredefinedStepDefs {
 
     @Then("I wait for element with xpath {string} to be present")
     public void iWaitForElementWithXpathToBePresent(String xpath) {
-        new WebDriverWait(getDriver(), 10, 200).until(ExpectedConditions.presenceOfElementLocated(By.xpath(xpath)));
+        new WebDriverWait(getDriver(), 10, 200)
+                .until(ExpectedConditions.presenceOfElementLocated(By.xpath(xpath)));
     }
 
     @Then("I wait for element with xpath {string} to not be present")
     public void iWaitForElementWithXpathToNotBePresent(String xpath) {
-        new WebDriverWait(getDriver(), 10, 200).until(ExpectedConditions.not(ExpectedConditions.presenceOfElementLocated(By.xpath(xpath))));
+        new WebDriverWait(getDriver(), 10, 200)
+                .until(ExpectedConditions.not(ExpectedConditions.presenceOfElementLocated(By.xpath(xpath))));
     }
 
     @Then("element with xpath {string} should be displayed")
@@ -162,7 +166,7 @@ public class PredefinedStepDefs {
     public void iSwitchToNewWindow() {
         Iterator<String> iterator = getDriver().getWindowHandles().iterator();
         String newWindow = iterator.next();
-        while(iterator.hasNext()) {
+        while (iterator.hasNext()) {
             newWindow = iterator.next();
         }
         getDriver().switchTo().window(newWindow);
