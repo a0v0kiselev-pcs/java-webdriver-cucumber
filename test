@@ -1,6 +1,10 @@
 #!/bin/bash
 
-T='@skryabin_com_resp and @skryabin_com_resp'
+cd "$(dirname "$0")" || exit
+
+[ -d 'node_modules' ] || npm install
+
+T='@skryabin_com_resp and @medium_size'
 
 O="cucumber.filter.tags=$T"
 
